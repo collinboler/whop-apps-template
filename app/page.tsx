@@ -11,6 +11,21 @@ import {
   themeAccentColorsOrdered,
 } from "frosted-ui";
 import { ThemeSwitcherButton } from "./page.client";
+/*
+import { Theme } from 'frosted-ui';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <Theme>
+          {children}
+        </Theme>
+      </body>
+    </html>
+  );
+}
+*/
 
 const tasks = [
   {
