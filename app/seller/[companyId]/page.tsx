@@ -1,25 +1,10 @@
 import { PageProps } from "@/lib/types";
-import { validateToken, WhopAPI, authorizedUserOn, hasAccess } from "@whop-apps/sdk";
+import { WhopAPI, authorizedUserOn, hasAccess } from "@whop-apps/sdk";
 import { headers } from "next/headers";
 
-
-
-export default async function SellerPage({
-  params: { companyId, experienceId },
-}: {
-  params: { companyId: string, experienceId: string },
-}) {
-  const { userId } = await validateToken({ headers });
-    // Check if the user has access to the company
-    const access = await hasAccess({
-      to: authorizedUserOn(companyId),
-      headers,
-    });
-  
-    // If the user does not have access, return an unauthorized message
-    if (!access) {
-      return <h1>You do not have access to view this company</h1>;
-    }
+export default async function Page({
+  params: { companyId },
+}: PageProps<"companyId">) {
   // Ensure user is an admin of the company
   if (
     !(await hasAccess({
@@ -36,7 +21,7 @@ export default async function SellerPage({
     );
   }
 
-  // Fetch information about the company
+  // Fetch information about experience
   const company = await WhopAPI.app().GET("/app/companies/{id}", {
     params: { path: { id: companyId } },
     next: { revalidate: 3600 }, // Customize next revalidation logic
@@ -46,13 +31,13 @@ export default async function SellerPage({
     return <div>{company.error.message}</div>;
   }
 
-  // Render the page that allows admins to manage settings/configuration for
-  // the company, including the experience ID
+  // Render the page that allows admins to manage settings / configuration for
+  // the company. This is the main page for your app on the company's dashboard.
+  // Eg: It is not scoped down to a single experience.
   return (
     <div>
       <h1>Manage settings on: {company.data.title}</h1>
       <p>Company: {company.data.id}</p>
-      <p>Experience ID: {experienceId}</p>
     </div>
   );
 }
